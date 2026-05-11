@@ -1,0 +1,37 @@
+model_list:
+  - model_name: brainiak
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+
+  - model_name: qwen-a
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+
+  - model_name: qwen-b
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+
+  - model_name: qwen-copilot
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+
+  - model_name: qwen-thinking
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+
+  - model_name: memory_v2
+    litellm_params:
+      model: ollama/qwen2.5:3b
+      api_base: http://localhost:11434
+      
+  - model_name: code_v1
+    litellm_params:
+      model: ollama/qwen2.5:3b
+
+litellm_settings:
+  drop_params: true
