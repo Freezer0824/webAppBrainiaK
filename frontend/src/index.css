@@ -1,0 +1,305 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: dark;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-heading: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Core palette */
+  --background: #0a0f1a;
+  --surface-1: #0f1624;
+  --surface-2: #141c2e;
+  --surface-3: #182335;
+
+  --border: #24314d;
+  --border-soft: rgba(255, 255, 255, 0.06);
+
+  --text-primary: #e6f0ff;
+  --text-secondary: #a5b2c8;
+  --text-muted: #7f8aa3;
+
+  --primary: #4da3ff;
+  --primary-light: #7cc3ff;
+  --accent: #22d3ee;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(90deg, #4da3ff, #22d3ee);
+  --gradient-deep: linear-gradient(180deg, #0b162b, #141c2e);
+
+  /* Effects */
+  --glow-sm: 0 0 12px rgba(77, 163, 255, 0.18);
+  --glow-md: 0 0 24px rgba(77, 163, 255, 0.25);
+  --glow-lg: 0 0 40px rgba(34, 211, 238, 0.16);
+
+  --shadow-soft:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+
+  --glass-bg: rgba(15, 22, 36, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+
+  --color-border-brainiak: var(--border);
+  --color-border-soft: var(--border-soft);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-accent: var(--accent);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+html {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top, rgba(77, 163, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, #09101b 0%, #0a0f1a 100%);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  isolation: isolate;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+p {
+  margin: 0;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+textarea {
+  scrollbar-width: thin;
+}
+
+/* Reusable Brainiak utility classes */
+@layer utilities {
+  .bg-brainiak {
+    background: var(--background);
+  }
+
+  .bg-surface-1 {
+    background: var(--surface-1);
+  }
+
+  .bg-surface-2 {
+    background: var(--surface-2);
+  }
+
+  .bg-surface-3 {
+    background: var(--surface-3);
+  }
+
+  .text-primary {
+    color: var(--text-primary);
+  }
+
+  .text-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .border-brainiak {
+    border-color: var(--border);
+  }
+
+  .border-soft {
+    border-color: var(--border-soft);
+  }
+
+  .bg-gradient-brainiak {
+    background-image: var(--gradient-primary);
+  }
+
+  .bg-gradient-deep {
+    background-image: var(--gradient-deep);
+  }
+
+  .shadow-glow-sm {
+    box-shadow: var(--glow-sm);
+  }
+
+  .shadow-glow-md {
+    box-shadow: var(--glow-md);
+  }
+
+  .shadow-glow-lg {
+    box-shadow: var(--glow-lg);
+  }
+
+  .glass-panel {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .panel-surface {
+    background: linear-gradient(
+      180deg,
+      rgba(20, 28, 46, 0.96),
+      rgba(15, 22, 36, 0.96)
+    );
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .brainiak-ring {
+    box-shadow:
+      0 0 0 1px rgba(77, 163, 255, 0.18),
+      0 0 24px rgba(77, 163, 255, 0.14);
+  }
+
+  .brainiak-hover {
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease,
+      border-color 180ms ease,
+      background-color 180ms ease,
+      opacity 180ms ease;
+  }
+
+  .brainiak-hover:hover {
+    transform: translateY(-1px);
+    border-color: rgba(77, 163, 255, 0.42);
+    box-shadow:
+      0 0 0 1px rgba(77, 163, 255, 0.14),
+      0 0 24px rgba(77, 163, 255, 0.16);
+  }
+
+  .heading-brainiak {
+    font-family: var(--font-heading);
+    letter-spacing: -0.03em;
+  }
+
+/* Scrollbar Brainiak */
+.scrollbar-brainiak {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.55) rgba(15, 23, 42, 0.55);
+}
+
+.scrollbar-brainiak::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.scrollbar-brainiak::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.55);
+  border-radius: 999px;
+}
+
+.scrollbar-brainiak::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(34, 211, 238, 0.8),
+    rgba(14, 165, 233, 0.45)
+  );
+  border: 2px solid rgba(15, 23, 42, 0.85);
+  border-radius: 999px;
+}
+
+.scrollbar-brainiak::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(103, 232, 249, 0.95),
+    rgba(34, 211, 238, 0.65)
+  );
+}
+}
