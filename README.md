@@ -1,231 +1,504 @@
-
 # BrainiaK Frontend
 
-Interface web BrainiaK Control Console pour exploiter les routes exposées du Core BrainiaK.
+Interface web BrainiaK Infini permettant aux conseillers, gestionnaires et opérateurs de piloter les différents modules BrainiaK avant raccordement complet au backend.
 
-## Objectif
+---
 
-Ce frontend fournit une console unifiée pour piloter les capacités principales de BrainiaK :
+# Objectif
 
-- Assistant principal
-- Requests Core
-- Dev Chat
-- Tools
-- Modes
-- Sensory
-- Crystals
-- Learning
-- System Checkup
-- Sessions locales
-- Tool Activity global
-- Observabilité runtime
+Ce frontend fournit une console métier unifiée pour :
 
-## Stack
+* Assistant BrainiaK
+* Boîte mail intelligente
+* Centre de validations
+* Dossiers clients
+* COMPLISOFT
+* RIBDC (Remplissage Intelligent BrainiaK de Documents Clients)
+* Mails modèles
+* Coffre-fort
+* Paramètres
+* Activité BrainiaK
+* Sessions locales
+* Observabilité runtime
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- Zustand
-- shadcn/ui
-- lucide-react
+L'ensemble des actions sensibles repose sur un principe fondamental :
 
-## Structure principale
+> Aucune action métier critique n'est exécutée sans validation humaine.
+
+---
+
+# Stack technique
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* Zustand
+* shadcn/ui
+* lucide-react
+
+---
+
+# Architecture
 
 ```txt
 src/
 ├── app/
 │   └── App.tsx
+│
 ├── components/
+│   ├── infini/
+│   │   ├── mailbox-dashboard.tsx
+│   │   ├── validation-center.tsx
+│   │   ├── client-files-dashboard.tsx
+│   │   ├── complisoft-dashboard.tsx
+│   │   ├── ribdc-dashboard.tsx
+│   │   ├── template-mails-dashboard.tsx
+│   │   ├── vault-dashboard.tsx
+│   │   └── settings-dashboard.tsx
+│   │
 │   ├── shared/
 │   └── ui/
+│
 ├── features/
-│   ├── chat/
-│   ├── reasoning/
-│   └── runtime/
-├── lib/
-│   ├── api/
-│   ├── config/
-│   └── session/
+│   └── infini/
+│
+├── services/
+│
 ├── store/
+│
+├── lib/
+│
 ├── styles/
+│
 └── types/
-````
+```
+
+---
+
+# Navigation métier
+
+## Accueil
+
+Vue d'ensemble de l'activité BrainiaK.
+
+---
+
+## Assistant BrainiaK
+
+Chat conversationnel principal.
+
+Fonctionnalités :
+
+* conversations locales
+* historique
+* streaming
+* génération BrainiaK
+* activités outils
+* raisonnement
+
+---
+
+# Boîte Mail
+
+Module de traitement intelligent des emails.
 
 ## Fonctionnalités
 
-### Assistant
+### Consultation
 
-* Envoi de prompt via `/v1/prompt`
-* Streaming SSE
-* Stop prompt
-* Retry
-* Upload fichiers
-* Mode raison local
-* Gestion d’erreurs backend
-* Détection de `(no answer produced)`
+* liste des mails
+* recherche
+* filtres avancés
+* priorités
 
-### Requests
+### Actions BrainiaK
 
-Routes :
+Pour chaque mail :
 
-```txt
-POST /v0/request
-GET  /v0/request/{request_id}/status
-GET  /v0/request/{request_id}/response
-```
+* Résumer
+* Préparer une réponse
+* Préparer une relance
 
-### Dev Chat
-
-Routes :
+### Workflow
 
 ```txt
-POST   /v0/dev/chat
-POST   /v0/dev/chat/stream
-POST   /v0/dev/chat/async
-GET    /v0/dev/chat/{job_id}/status
-GET    /v0/dev/chat/{job_id}/result
-GET    /v0/dev/session
-POST   /v0/dev/session/messages
-DELETE /v0/dev/session
+À traiter
+    ↓
+Préparé
+    ↓
+En validation
+    ↓
+Validé / Refusé
+    ↓
+Envoyé
+    ↓
+Archivé
 ```
 
-### Tools
+### Validation humaine
 
-Routes :
+Aucun mail ne peut être envoyé automatiquement.
+
+### Gestion avancée
+
+* édition des résultats générés
+* suppression
+* ajout de pièces jointes
+* suppression de pièces jointes
+* ajout au centre de validation
+
+### Synchronisation validations
+
+Suppression d'une validation :
 
 ```txt
-GET  /toolhub/health
-GET  /v1/tools/list
-POST /v1/tools/call
+3/3 validations
+↓
+2/3 validations
 ```
 
-### Modes
+L'action correspondante redevient disponible.
 
-Routes :
+Si toutes les validations sont supprimées :
 
 ```txt
-GET    /v1/modes
-POST   /v1/modes
-POST   /v1/modes/{mode_name}
-DELETE /v1/modes/{mode_name}
-DELETE /v1/modes
+En validation
+↓
+À traiter
 ```
 
-### Sensory
+Tous les boutons redeviennent utilisables.
 
-Inclut :
+---
 
-* State
-* Config
-* Devices
-* Heartbeat
-* Audio
-* Vision
-* Voice
-* Events
+# Centre de validations
 
-### Crystals
+Module transversal de validation humaine.
 
-Routes :
+## Sources supportées
+
+* Mail
+* COMPLISOFT
+* RIBDC
+* Dossiers clients
+* Coffre-fort
+* Templates
+* Paramètres
+
+## Actions
+
+### Analyse BrainiaK
+
+* Analyse avant validation
+* Explication du risque
+
+### Décisions humaines
+
+* Valider
+* Refuser
+* Supprimer
+
+## Gestion des risques
+
+Niveaux :
+
+* Faible
+* Moyen
+* Élevé
+
+## Synchronisation
+
+Une décision de validation est propagée au module d'origine.
+
+---
+
+# Dossiers Clients
+
+Gestion centralisée des dossiers clients.
+
+## Fonctionnalités prévues
+
+* liste des dossiers
+* état du dossier
+* documents disponibles
+* documents manquants
+* analyse BrainiaK
+* prochaines actions recommandées
+
+---
+
+# COMPLISOFT
+
+Préparation des données destinées à COMPLISOFT.
+
+## Fonctionnalités prévues
+
+* préparation dossier
+* contrôle complétude
+* vérification conformité
+* pré-synchronisation
+* validation humaine avant envoi
+
+---
+
+# RIBDC
+
+Remplissage Intelligent BrainiaK de Documents Clients.
+
+## Objectif
+
+Préremplir automatiquement des formulaires à partir des données déjà disponibles.
+
+## Fonctionnalités
+
+### Upload
+
+* ajout de formulaires
+* gestion de plusieurs dossiers
+
+### Analyse
+
+BrainiaK peut :
+
+* détecter les champs
+* identifier les données disponibles
+* détecter les données manquantes
+
+### Génération
+
+* préremplissage automatique
+* rapport de contrôle
+* liste des champs manquants
+
+### Validation
+
+Le document final doit être validé avant utilisation.
+
+---
+
+# Mails Modèles
+
+Gestion des modèles d'emails.
+
+## Fonctionnalités prévues
+
+* bibliothèque de modèles
+* variables dynamiques
+* aperçu
+* génération automatique
+* validation avant utilisation
+
+---
+
+# Coffre-fort
+
+Gestion sécurisée des accès métiers.
+
+## Fonctionnalités prévues
+
+* consultation des accès
+* informations de connexion
+* checklist sécurité
+* audit des utilisations
+
+---
+
+# Paramètres
+
+Configuration de BrainiaK Infini.
+
+## Fonctionnalités prévues
+
+* état des connecteurs
+* configuration backend
+* mode démonstration
+* état de santé des modules
+
+---
+
+# Persistance locale
+
+Le frontend utilise actuellement :
 
 ```txt
-GET  /v1/crystals/info
-GET  /v1/crystals/lookup
-POST /v1/crystals/lookup_batch
-GET  /v1/crystals/encode
-POST /v1/crystals/nearest
+Zustand Persist
++
+LocalStorage
 ```
 
-### Learning
+pour :
 
-Routes :
+* mails
+* validations
+* activités
+* sessions
+* résultats BrainiaK
+
+---
+
+# Services BrainiaK
+
+Les services métier sont actuellement encapsulés dans :
 
 ```txt
-POST /v1/feedback
-POST /v1/feedback-sense
-POST /v1/skinner
-POST /v1/teach
-POST /v1/teach-contrastive
-GET  /v1/tokenless
-POST /v1/tokenless
+src/services/
 ```
 
-### System
-
-Route :
+Exemples :
 
 ```txt
-GET /v1/system/checkup
+mailbox.service.ts
+validation.service.ts
+ribdc.service.ts
+complisoft.service.ts
 ```
 
-## Installation
+Le backend réel pourra être branché sans modifier les composants UI.
 
-```bash
-npm install
-```
+---
 
-## Développement
+# Variables d'environnement
 
-```bash
-npm run dev
-```
-
-L’application démarre par défaut sur :
-
-```txt
-http://localhost:5173
-```
-
-## Build
-
-```bash
-npm run build
-```
-
-## Preview production locale
-
-```bash
-npm run preview
-```
-
-## Variables d’environnement
-
-Créer un fichier `.env` :
+Créer un fichier :
 
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 VITE_TENANT_ID=dev
 ```
 
-Adapter selon l’URL réelle du backend BrainiaK.
+Exemple production :
 
-## Validation manuelle
+```env
+VITE_API_BASE_URL=https://brainiak.company.local
+VITE_TENANT_ID=infini
+```
 
-Avant chaque push important :
+---
+
+# Installation
+
+```bash
+npm install
+```
+
+---
+
+# Développement
+
+```bash
+npm run dev
+```
+
+Application disponible sur :
+
+```txt
+http://localhost:5173
+```
+
+---
+
+# Build
 
 ```bash
 npm run build
 ```
 
-À vérifier :
+---
 
-* navigation sur toutes les vues
-* création session
-* sélection session
-* renommage session
-* archivage/restauration session
-* suppression session
-* duplication session
-* export JSON/Markdown
-* boutons refresh
-* boutons submit
-* erreurs backend visibles
-* Tool Activity mis à jour
-* responsive fenêtre réduite/fullscreen
+# Prévisualisation locale
 
-## Notes
+```bash
+npm run preview
+```
 
-Les sessions sont actuellement stockées côté frontend via Zustand persist/local storage.
+---
 
-Certaines routes dépendent de services backend actifs : LLM, Tool Hub, Sensory, Crystals, etc.
+# Réinitialisation des données locales
+
+Pour supprimer tous les états persistés :
+
+```javascript
+localStorage.clear();
+location.reload();
+```
+
+ou via DevTools :
+
+```txt
+Application
+→ Local Storage
+→ Clear All
+```
+
+---
+
+# Validation manuelle avant livraison
+
+Vérifier :
+
+## Boîte mail
+
+* génération résumé
+* génération réponse
+* génération relance
+* ajout validation
+* suppression validation
+* réactivation des boutons
+* changement d'état du mail
+
+## Validations
+
+* analyse BrainiaK
+* explication risque
+* validation
+* refus
+* suppression
+
+## RIBDC
+
+* ajout formulaire
+* génération préremplissage
+* génération rapport
+* validation
+
+## Navigation
+
+* tous les onglets accessibles
+* responsive
+* persistance des données
+* rafraîchissement de page
+
+---
+
+# État actuel
+
+## Fonctionnel
+
+* Assistant BrainiaK
+* Boîte mail
+* Centre de validations
+* Workflow de validation
+* Persistance Zustand
+* RIBDC (version démonstration)
+
+## En préparation backend
+
+* Dossiers clients
+* COMPLISOFT
+* Coffre-fort
+* Mails modèles
+* Connecteurs réels
+* Synchronisation métier réelle
+
+---
+
+# Philosophie BrainiaK
+
+BrainiaK assiste l'utilisateur.
+
+BrainiaK propose.
+
+L'humain décide.
+
+Aucune action métier sensible n'est exécutée sans validation humaine.

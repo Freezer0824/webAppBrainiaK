@@ -38,7 +38,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     >
       <div className="mb-2 flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-[var(--text-secondary)]">
-          <span>{message.role === "user" ? "User" : "Assistant"}</span>
+          <span>{message.role === "user" ? "Vous" : "BrainiaK"}</span>
           {message.timestamp ? <span>{message.timestamp}</span> : null}
         </div>
 

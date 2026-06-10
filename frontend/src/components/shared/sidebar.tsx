@@ -1,18 +1,5 @@
 import { useMemo, useState } from "react";
-import {
-  Bot,
-  Boxes,
-  Cpu,
-  GraduationCap,
-  HeartPulse,
-  MessageSquare,
-  Route,
-  Search,
-  ServerCog,
-  Sparkles,
-  Wrench,
-} from "lucide-react";
-import { ConversationList } from "./conversation-list";
+import { Search, Sparkles } from "lucide-react";
 import type { ConversationItem } from "@/types/chat";
 import { Button } from "@/components/ui/button";
 import { useConversationStore } from "@/store/conversation-store";
@@ -21,17 +8,9 @@ import { createSessionId } from "@/lib/session/session";
 import { useRuntimeStore } from "@/store/runtime-store";
 import { UserMenu } from "@/components/shared/user-menu";
 import logoBrainiak from "@/assets/logo-brainiak.png";
-
-export type AppView =
-  | "assistant"
-  | "requests"
-  | "dev-chat"
-  | "tools"
-  | "modes"
-  | "sensory"
-  | "crystals"
-  | "learning"
-  | "system";
+import type { AppView } from "@/features/infini/infini-types";
+import { infiniNavigationItems } from "@/features/infini/infini-navigation";
+import { ConversationList } from "@/components/shared/conversation-list";
 
 type SessionFilter = "active" | "archived";
 
@@ -41,21 +20,29 @@ type SidebarProps = {
   onViewChange: (view: AppView) => void;
 };
 
-const navItems: Array<{
-  view: AppView;
+function ConnectionStatusItem({
+  label,
+  status,
+}: {
   label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}> = [
-  { view: "assistant", label: "Assistant", icon: Bot },
-  { view: "requests", label: "Requests", icon: Route },
-  { view: "dev-chat", label: "Dev Chat", icon: MessageSquare },
-  { view: "tools", label: "Tools", icon: Wrench },
-  { view: "modes", label: "Modes", icon: Cpu },
-  { view: "sensory", label: "Sensory", icon: HeartPulse },
-  { view: "crystals", label: "Crystals", icon: Boxes },
-  { view: "learning", label: "Learning", icon: GraduationCap },
-  { view: "system", label: "System", icon: ServerCog },
-];
+  status: "connected" | "warning" | "disconnected";
+}) {
+  const statusClass =
+    status === "connected"
+      ? "bg-emerald-400"
+      : status === "warning"
+        ? "bg-amber-400"
+        : "bg-slate-500";
+
+  return (
+    <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2">
+      <span className="truncate text-xs text-[var(--text-secondary)]">
+        {label}
+      </span>
+      <span className={`h-2.5 w-2.5 rounded-full ${statusClass}`} />
+    </div>
+  );
+}
 
 export function Sidebar({
   conversations,
@@ -96,7 +83,7 @@ export function Sidebar({
 
     createConversation({
       sessionId: nextSessionId,
-      title: "Nouvelle session",
+      title: "Nouvelle conversation",
     });
 
     setSessionFilter("active");
@@ -115,25 +102,6 @@ export function Sidebar({
         .length,
     [conversations],
   );
-
-  const filteredConversations = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-
-    return conversations.filter((conversation) => {
-      const matchesArchiveState =
-        sessionFilter === "archived"
-          ? Boolean(conversation.archivedAt)
-          : !conversation.archivedAt;
-
-      if (!matchesArchiveState) return false;
-      if (!normalized) return true;
-
-      const title = conversation.title.toLowerCase();
-      const preview = (conversation.preview ?? "").toLowerCase();
-
-      return title.includes(normalized) || preview.includes(normalized);
-    });
-  }, [conversations, query, sessionFilter]);
 
   function getNavButtonClass(view: AppView) {
     const isActive = activeView === view;
@@ -169,9 +137,11 @@ export function Sidebar({
 
           <div className="min-w-0">
             <h1 className="heading-brainiak truncate text-lg text-[var(--text-primary)]">
-              Brainiak
+              BrainiaK
             </h1>
-            <p className="text-secondary truncate text-sm">Control Console</p>
+            <p className="text-secondary truncate text-sm">
+              Espace Infini
+            </p>
           </div>
         </div>
 
@@ -180,44 +150,18 @@ export function Sidebar({
           className="w-full justify-start bg-[var(--surface-2)] text-[var(--text-primary)] hover:bg-[var(--surface-3)]"
         >
           <Sparkles className="mr-2 h-4 w-4" />
-          New session
+          Nouvelle conversation
         </Button>
-      </div>
-
-      <div className="shrink-0 border-b border-[var(--border)] p-4">
-        <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2">
-          <Search className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search sessions"
-            className="w-full bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
-          />
-        </div>
-
-        <div className="mt-3 flex rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-1">
-          <button
-            type="button"
-            onClick={() => setSessionFilter("active")}
-            className={getFilterButtonClass("active")}
-          >
-            Actives · {activeCount}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setSessionFilter("archived")}
-            className={getFilterButtonClass("archived")}
-          >
-            Archivées · {archivedCount}
-          </button>
-        </div>
       </div>
 
       <div className="scrollbar-brainiak min-h-0 flex-1 overflow-y-auto">
         <nav className="border-b border-[var(--border)] p-4">
+          <p className="mb-3 px-1 text-xs font-medium uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+            Navigation
+          </p>
+
           <div className="space-y-1">
-            {navItems.map((item) => {
+            {infiniNavigationItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeView === item.view;
 
@@ -227,6 +171,7 @@ export function Sidebar({
                   type="button"
                   onClick={() => onViewChange(item.view)}
                   className={getNavButtonClass(item.view)}
+                  title={item.description}
                 >
                   <Icon
                     className={[
@@ -243,10 +188,72 @@ export function Sidebar({
           </div>
         </nav>
 
-        <ConversationList conversations={filteredConversations} />
+        <div className="border-b border-[var(--border)] p-4">
+          <p className="mb-3 px-1 text-xs font-medium uppercase tracking-[0.18em] text-[var(--text-secondary)]">
+            Conversations
+          </p>
+
+          <div className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-2)] px-3 py-2">
+            <Search className="h-4 w-4 shrink-0 text-[var(--text-secondary)]" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Rechercher"
+              className="w-full bg-transparent text-sm text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
+            />
+          </div>
+
+          <div className="mt-3 flex rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-1">
+            <button
+              type="button"
+              onClick={() => setSessionFilter("active")}
+              className={getFilterButtonClass("active")}
+            >
+              Actives · {activeCount}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSessionFilter("archived")}
+              className={getFilterButtonClass("archived")}
+            >
+              Archivées · {archivedCount}
+            </button>
+          </div>
+        </div>
+
+        <div className="min-h-0 flex-1 p-4">
+          <ConversationList
+            conversations={conversations
+              .filter((conversation) =>
+                sessionFilter === "active"
+                  ? !conversation.archivedAt
+                  : Boolean(conversation.archivedAt),
+              )
+              .filter((conversation) => {
+                if (!query.trim()) return true;
+
+                return (
+                  conversation.title
+                    .toLowerCase()
+                    .includes(query.toLowerCase()) ||
+                  conversation.preview
+                    ?.toLowerCase()
+                    .includes(query.toLowerCase())
+                );
+              })}
+          />
+        </div>
       </div>
 
-      <div className="shrink-0 border-t border-[var(--border)]">
+      <div className="shrink-0 border-t border-[var(--border)] p-4">
+        <div className="mb-4 space-y-2">
+          <ConnectionStatusItem label="BrainiaK actif" status="connected" />
+          <ConnectionStatusItem label="Mail connecté" status="warning" />
+          <ConnectionStatusItem label="COMPLISOFT" status="warning" />
+          <ConnectionStatusItem label="Coffre-fort" status="connected" />
+        </div>
+
         <UserMenu />
       </div>
     </aside>

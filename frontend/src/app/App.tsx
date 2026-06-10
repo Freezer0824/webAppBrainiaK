@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AppShell } from "@/components/shared/app-shell";
 import { AuthScreen } from "@/components/shared/auth-screen";
-import type { AppView } from "@/components/shared/sidebar";
+import type { AppView } from "@/features/infini/infini-types";
 import {
   getCoreHealth,
   getToolhubHealth,
@@ -13,7 +13,7 @@ import { useChatStore } from "@/store/chat-store";
 import { useConversationStore } from "@/store/conversation-store";
 
 export default function App() {
-  const [activeView, setActiveView] = useState<AppView>("assistant");
+  const [activeView, setActiveView] = useState<AppView>("home");
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
@@ -60,7 +60,7 @@ export default function App() {
     if (!isAuthenticated) {
       initialConversationLoadDone.current = false;
       runtimeBootstrapDone.current = false;
-      setActiveView("assistant");
+      setActiveView("home");
       return;
     }
 
@@ -104,7 +104,7 @@ export default function App() {
 
       createConversation({
         sessionId: nextSessionId,
-        title: "Nouvelle session",
+        title: "Nouvelle conversation",
       });
 
       setMessages([]);
@@ -153,31 +153,37 @@ export default function App() {
         setToolEvents([
           {
             id: "core-health",
-            name: "Core API",
+            name: "BrainiaK",
             status: core.status === "ok" ? "done" : "idle",
-            detail: core.status,
+            detail:
+              core.status === "ok"
+                ? "Service principal disponible"
+                : "Service principal indisponible",
             category: "tool",
           },
           {
             id: "toolhub-health",
-            name: "Tool Hub",
+            name: "Connecteurs",
             status:
               (toolhub.status as string | undefined) === "ok" ? "done" : "idle",
-            detail: String(toolhub.mode ?? "unknown"),
+            detail:
+              (toolhub.status as string | undefined) === "ok"
+                ? "Connecteurs prêts"
+                : "Connecteurs indisponibles",
             category: "tool",
           },
           {
             id: "tools-list",
-            name: "Registry",
+            name: "Services disponibles",
             status: "done",
-            detail: `${tools.count} tools available`,
+            detail: `${tools.count} connecteurs disponibles`,
             category: "tool",
           },
         ]);
 
         runtimeBootstrapDone.current = true;
       } catch (error) {
-        console.error("Runtime bootstrap failed:", error);
+        console.error("Initialisation BrainiaK échouée :", error);
       }
     }
 

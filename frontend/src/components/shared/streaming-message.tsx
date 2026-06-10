@@ -14,7 +14,7 @@ export function StreamingMessage({ content }: StreamingMessageProps) {
         </div>
 
         <p className="whitespace-pre-wrap text-sm leading-7 text-[var(--text-primary)]">
-          {content || "Brainiak réfléchit..."}
+          {content || "BrainiaK prépare une réponse…"}
         </p>
       </div>
     </div>

@@ -182,7 +182,7 @@ export function PromptInput() {
                       : "bg-amber-500/10 text-amber-300",
                   )}
                 >
-                  {file.uploaded ? "uploaded" : "pending"}
+                  {file.uploaded ? "ajouté" : "en attente"}
                 </span>
 
                 <button
@@ -202,7 +202,7 @@ export function PromptInput() {
           value={value}
           onChange={(event) => setValue(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Demandez à Brainiak de raisonner, planifier, analyser ou orchestrer..."
+          placeholder="Demandez à BrainiaK de préparer une relance, résumer un mail, générer un RIBDDC..."
           disabled={isStreaming}
           className="max-h-[220px] min-h-[96px] resize-none overflow-y-auto border-0 bg-transparent text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus-visible:ring-0 disabled:opacity-70"
         />
@@ -233,7 +233,7 @@ export function PromptInput() {
               )}
             >
               <Wand2 className="mr-2 h-4 w-4" />
-              Outils
+              Actions
             </Button>
 
             <Button
@@ -249,7 +249,7 @@ export function PromptInput() {
               )}
             >
               <Sparkles className="mr-2 h-4 w-4" />
-              Raison
+              Analyse
             </Button>
 
             {canRetry ? (
@@ -268,7 +268,7 @@ export function PromptInput() {
             {toolsOpen ? (
               <div className="absolute bottom-12 left-0 z-20 min-w-[240px] rounded-2xl border border-[var(--border)] bg-[var(--surface-1)] p-2 shadow-xl">
                 <div className="mb-2 px-2 py-1 text-xs uppercase tracking-[0.14em] text-[var(--text-secondary)]">
-                  Presets Brainiak
+                  Actions Brainiak
                 </div>
 
                 <div className="space-y-1">

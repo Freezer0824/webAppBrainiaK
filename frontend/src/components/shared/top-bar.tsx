@@ -1,93 +1,119 @@
-import { Bell, Download, PanelRight, Settings2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Bell, PanelRight, Settings2 } from "lucide-react";
+import { NotificationPanel } from "@/components/infini/notification-panel";
 import { Button } from "@/components/ui/button";
-import { useChatStore } from "@/store/chat-store";
-import { useConversationStore } from "@/store/conversation-store";
+import { useActivityStore } from "@/store/activity-store";
+import { useValidationStore } from "@/store/validation-store";
+import { useWorkflowStore } from "@/store/workflow-store";
+import type { AppView } from "@/features/infini/infini-types";
 
-function downloadTextFile(filename: string, content: string) {
-  const blob = new Blob([content], {
-    type: "application/json;charset=utf-8",
-  });
+type TopBarProps = {
+  activeView: AppView;
+};
 
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
+const viewTitles: Record<AppView, { title: string; subtitle: string }> = {
+  home: {
+    title: "Accueil",
+    subtitle: "Vue d’ensemble des opérations Infini",
+  },
+  assistant: {
+    title: "Assistant BrainiaK",
+    subtitle: "Copilote métier pour les mails, dossiers, RIBDDC et conformité",
+  },
+  mailbox: {
+    title: "Boîte mail",
+    subtitle: "Tri, relances, réponses et archivage assisté",
+  },
+  clients: {
+    title: "Dossiers clients",
+    subtitle: "Suivi des clients, documents et informations clés",
+  },
+  complisoft: {
+    title: "COMPLISOFT",
+    subtitle: "Préparation et contrôle des données de conformité",
+  },
+  ribddc: {
+    title: "RIBDDC",
+    subtitle: "Génération guidée avec validation humaine",
+  },
+  templates: {
+    title: "Mails modèles",
+    subtitle: "Templates, variables et brouillons personnalisés",
+  },
+  vault: {
+    title: "Coffre-fort",
+    subtitle: "Accès sécurisés aux plateformes métier",
+  },
+  validations: {
+    title: "Validations",
+    subtitle: "Actions à vérifier avant envoi ou synchronisation",
+  },
+  settings: {
+    title: "Paramètres",
+    subtitle: "Connexions, sécurité et préférences",
+  },
+};
 
-  link.href = url;
-  link.download = filename;
-  link.click();
+export function TopBar({ activeView }: TopBarProps) {
+  const current = viewTitles[activeView];
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
 
-  URL.revokeObjectURL(url);
-}
+  const activities = useActivityStore((state) => state.activities);
+  const validations = useValidationStore((state) => state.validations);
+  const tasks = useWorkflowStore((state) => state.tasks);
 
-export function TopBar() {
-  const statusLabel = useChatStore((state) => state.statusLabel);
+  const notificationCount = useMemo(() => {
+    const runningTasks = tasks.filter((task) => task.status === "running").length;
+    const errorTasks = tasks.filter((task) => task.status === "error").length;
+    const pendingValidations = validations.filter(
+      (validation) => validation.status === "en attente",
+    ).length;
 
-  const activeConversationId = useConversationStore(
-    (state) => state.activeConversationId,
-  );
-  const conversations = useConversationStore((state) => state.conversations);
+    return runningTasks + errorTasks + pendingValidations;
+  }, [tasks, validations]);
 
-  const activeConversation =
-    conversations.find(
-      (conversation) => conversation.id === activeConversationId,
-    ) ?? null;
-
-  function handleExportSession() {
-    if (!activeConversation) return;
-
-    const safeTitle = activeConversation.title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9-_]+/gi, "-")
-      .replace(/^-+|-+$/g, "");
-
-    const filename = `${safeTitle || "brainiak-session"}.json`;
-
-    downloadTextFile(
-      filename,
-      JSON.stringify(
-        {
-          exportedAt: new Date().toISOString(),
-          conversation: activeConversation,
-        },
-        null,
-        2,
-      ),
-    );
-  }
+  const hasRecentActivity = activities.length > 0;
 
   return (
-    <header className="glass-panel sticky top-0 z-20 flex items-center justify-between border-b border-[var(--border)] px-5 py-4">
-      <div>
-        <h2 className="heading-brainiak text-xl">Brainiak Session</h2>
-        <p className="text-secondary text-sm">
-          {statusLabel
-            ? `Pipeline: ${statusLabel}`
-            : "Espace de travail de raisonnement structuré"}
+    <header className="sticky top-0 z-20 flex h-[64px] items-center justify-between border-b border-[var(--border)] bg-[var(--surface-1)] px-5">
+      <div className="min-w-0">
+        <h2 className="truncate text-base font-semibold text-[var(--text-primary)]">
+          {current.title}
+        </h2>
+
+        <p className="truncate text-xs text-[var(--text-secondary)]">
+          {current.subtitle}
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={handleExportSession}
-          disabled={!activeConversation}
-          title="Exporter la session"
-          className="text-[var(--text-secondary)] disabled:opacity-40"
-        >
-          <Download className="h-4 w-4" />
-        </Button>
+      <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-200 md:flex">
+        <span className="h-2 w-2 rounded-full bg-emerald-400" />
+        BrainiaK prêt · validation humaine active
+      </div>
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          title="Notifications"
-          className="text-[var(--text-secondary)]"
-        >
-          <Bell className="h-4 w-4" />
-        </Button>
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            title="Notifications"
+            onClick={() => setNotificationsOpen((open) => !open)}
+            className="relative text-[var(--text-secondary)]"
+          >
+            <Bell className="h-4 w-4" />
+
+            {notificationCount > 0 ? (
+              <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white">
+                {notificationCount}
+              </span>
+            ) : hasRecentActivity ? (
+              <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-cyan-400" />
+            ) : null}
+          </Button>
+
+          {notificationsOpen ? <NotificationPanel /> : null}
+        </div>
 
         <Button
           type="button"
