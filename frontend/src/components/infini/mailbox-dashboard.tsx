@@ -83,9 +83,7 @@ export function MailboxDashboard() {
   const removeTask = useWorkflowStore((state) => state.removeTask);
 
   const [editingResultId, setEditingResultId] = useState<string | null>(null);
-  const [activeResult, setActiveResult] = useState<BrainiakMailResult | null>(
-    null,
-  );
+
   const [selectedResultId, setSelectedResultId] = useState<string | null>(null);
   const [generatedResults, setGeneratedResults] = useState<MailGeneratedResults>(
     () => loadMailGeneratedResults(),
@@ -219,7 +217,6 @@ export function MailboxDashboard() {
 
     setError(null);
     setAddedToValidation(false);
-    setActiveResult(null);
 
     setLoadingAction({
       mailId: mail.id,
@@ -275,7 +272,6 @@ export function MailboxDashboard() {
         },
       }));
 
-      setActiveResult(generatedResult);
       setSelectedResultId(generatedResult.id);
 
       addActivity({
@@ -364,7 +360,6 @@ export function MailboxDashboard() {
       };
     });
 
-    setActiveResult(null);
     setSelectedResultId(null);
     setEditingResultId(null);
     setAddedToValidation(true);
@@ -397,7 +392,6 @@ export function MailboxDashboard() {
       };
     });
 
-    setActiveResult(updatedResult);
     setSelectedResultId(updatedResult.id);
     setEditingResultId(null);
 
@@ -435,7 +429,6 @@ export function MailboxDashboard() {
       };
     });
 
-    setActiveResult(updatedResult);
     setSelectedResultId(updatedResult.id);
 
     addActivity({
@@ -462,7 +455,6 @@ export function MailboxDashboard() {
       };
     });
 
-    setActiveResult(null);
     setSelectedResultId(null);
     setEditingResultId(null);
 
